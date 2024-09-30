@@ -6,6 +6,11 @@
 # Author: Damien MOLINA
 #
 
+# This value is extremely useful to determine the date of the
+# last update of the rules, so that we can only take the new rules
+# into account if the client checked the new rules.
+version = 1
+
 #
 # Local File Inclusion (LFI).
 #
@@ -134,23 +139,57 @@ RCE = {
     "RCE_ARITHMETIC_OPERATIONS": r"(\{\{?|<%=)\s*[0-9]+\s*(\+|\-|\*)\s*[0-9]+\s*(\}\}?|%>)",
 }
 
-# Legitimate user agent regex.
+# Regex matching some malicious / scanning user agents. This is too hard to
+# determine whether a user agent is legitimate or not, as there is no standards.
+# TODO: this is a WIP.
 HTTP_USER_AGENT = r"(API-Spyder|Cyberint|HTTP Banner Detection|Nacos|bitdiscovery|Nmap)"
 
 # Legitimate X-Forwarded-For regex.
+# This value contains the "true client" IP address that could be different from the client
+# IP making the request when the end-user goes through a Web proxy.
 HTTP_X_FORWARDED_FOR = r"^(((([0-9\.]{1,3}\.){3}[0-9]{1,3}|(?:\[)?[0-9a-f:]+(?:\])?)(?:\:[0-9]+)?)(,|,\s|$))+$"
 
-# Legitimate Accept-Language values.
+# Legitimate Accept-language regex.
+# This field contains the client spoken languages used by websites to determine which language
+# should be returned to the user.
 HTTP_ACCEPT_LANGUAGE = r"^(((?:,\s*)?([a-zA-Z]{2}(?:-[a-zA-Z0-9]{2,3})?|\*)(?:;(\s*)q=[0-9](?:\.[0-9])?)?)+)$"
 
-# Legitimate Content-Type values.
+# Legitimate Content-Type regex.
+# This value contains the content type expected by the browser like JSON, Multipart, etc.
 HTTP_CONTENT_TYPE = r"^(application|audio|example|font|image|message|model|multipart|text|video)\/[a-z0-9\.\-_+,]+$"
 
-# Legitimate cookie values.
+# Legitimate Cookie regex.
 # A cookie is considered "legitimate" if it follows:
 # - RFC6265 section 4.1.1
 # - RFC2616 section 2.2
+#
+# From experience, I saw that multiple websites don't follow the RFC with unencrypted cookies that are not
+# properly encoded either. So, this needs to be used carefully.
 HTTP_COOKIE = r"^([^\(\)<>,;:\\\"\/\[\]\?=\{\}]+)=([^\\,;\"]*)$"
 
-# Regex matching a legitimate asset URL like http://example.org/images/example.jpg
-CUSTOM_LEGITIMATE_ASSET_URL = r"^([a-zA-Z0-9\/\.]+)$"
+# This is a custom regex matching legitimate asset urls.
+# This is meant to reduce the overload of searching all regexes if
+# it is a legitimate asset URL like example.org/assets/image.png
+LEGITIMATE_ASSET_URL = r"^([a-zA-Z0-9\/\.]+)$"
+
+#
+# This part is a recap of the rules, so that the compilation rules
+# have a full list of the regexes.
+#
+EXPORTED_RULES = {
+    # URL-related regex.
+    "LFI": LFI,
+    "XSS": XSS,
+    "SQLI": SQLI,
+    "RCE": RCE,
+
+    # HTTP headers rules.
+    "HTTP": {
+        "USER_AGENT": HTTP_USER_AGENT,
+        "X_FORWARDED_FOR": HTTP_X_FORWARDED_FOR,
+        "ACCEPT_LANGUAGE": HTTP_ACCEPT_LANGUAGE,
+        "CONTENT_TYPE": HTTP_CONTENT_TYPE,
+        "COOKIE": HTTP_COOKIE,
+        "ASSET_URL": LEGITIMATE_ASSET_URL,
+    },
+}
