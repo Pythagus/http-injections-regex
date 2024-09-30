@@ -6,11 +6,6 @@
 # Author: Damien MOLINA
 #
 
-# This value is extremely useful to determine the date of the
-# last update of the rules, so that we can only take the new rules
-# into account if the client checked the new rules.
-version = 1
-
 #
 # Local File Inclusion (LFI).
 #
@@ -20,7 +15,7 @@ version = 1
 #
 # See: https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion
 #
-patterns_lfi = {
+LFI = {
     # Directory traversal (Windows + Linux).
     # Examples:
     #  - http://example.org/?../../../../etc/passwd
@@ -59,7 +54,7 @@ patterns_lfi = {
 #
 # See: https://owasp.org/www-community/attacks/SQL_Injection
 #
-patterns_sqli = {
+SQLI = {
     "SQL_LOGICS_1": r"\b(or|and|having|where)(\s|:|\(|\"|\')*[0-9xya]+(\)|\"|\'|\s)*=+(\s|\(|\"|\')*[0-9axy]+", # AND/OR 1=1
     "SQL_LOGICS_2": r"\b(or|and)((\s+)true|(.*)is(\s*)null|(\s+|\/(\*)+\/)\(?[0-9]+)", # Arithmetic evaluation
     "SQL_COMMANDS": r"\b(select|insert|update|delete|drop|alter|create|union|waitfor(\s+|\/(\*)+\/)delay|(order(\s+|\/(\*)+\/)by))(\s+|\/(\*)+\/)", # SQL keywords
@@ -77,7 +72,7 @@ patterns_sqli = {
 #
 # See: https://owasp.org/www-community/attacks/xss/
 #
-patterns_xss = {
+XSS = {
     "XSS_SCRIPT_TAG": r"<(\s*|\/)script(\s*)", # <script> tags
     "XSS_EVENTS_KEYWORDS": r"\bon([a-z]+)(\s|=| |})", # Javascript keywords
     "XSS_FUNCTIONS": r"\b(throw|alert|prompt)(\s*)(\s|{|\(|\)|\`)", # Some Javascript functions like alert(3)
@@ -104,7 +99,7 @@ patterns_xss = {
 #  - https://owasp.org/www-community/attacks/Code_Injection
 #  - https://owasp.org/www-community/attacks/Command_Injection
 #
-patterns_rce = {
+RCE = {
     # HTTP redirections.
     "RCE_HTTP_REDIRECTIONS_KNOWN_MALICIOUS_WEBSITES": r"\b(oast\.(pro|live|site|online|fun|me)|bxss\.me|interact\.sh|evil\.com|cirt\.net|it\.h4\.vc)", # Redirection to known malicious websites.
     
@@ -140,22 +135,22 @@ patterns_rce = {
 }
 
 # Legitimate user agent regex.
-pattern_user_agent = r"(API-Spyder|Cyberint|HTTP Banner Detection|Nacos|bitdiscovery|Nmap)"
+HTTP_USER_AGENT = r"(API-Spyder|Cyberint|HTTP Banner Detection|Nacos|bitdiscovery|Nmap)"
 
 # Legitimate X-Forwarded-For regex.
-pattern_xff = r"^(((([0-9\.]{1,3}\.){3}[0-9]{1,3}|(?:\[)?[0-9a-f:]+(?:\])?)(?:\:[0-9]+)?)(,|,\s|$))+$"
+HTTP_X_FORWARDED_FOR = r"^(((([0-9\.]{1,3}\.){3}[0-9]{1,3}|(?:\[)?[0-9a-f:]+(?:\])?)(?:\:[0-9]+)?)(,|,\s|$))+$"
 
 # Legitimate Accept-Language values.
-pattern_accept_language = r"^(((?:,\s*)?([a-zA-Z]{2}(?:-[a-zA-Z0-9]{2,3})?|\*)(?:;(\s*)q=[0-9](?:\.[0-9])?)?)+)$"
+HTTP_ACCEPT_LANGUAGE = r"^(((?:,\s*)?([a-zA-Z]{2}(?:-[a-zA-Z0-9]{2,3})?|\*)(?:;(\s*)q=[0-9](?:\.[0-9])?)?)+)$"
 
 # Legitimate Content-Type values.
-pattern_content_type = r"^(application|audio|example|font|image|message|model|multipart|text|video)\/[a-z0-9\.\-_+,]+$"
+HTTP_CONTENT_TYPE = r"^(application|audio|example|font|image|message|model|multipart|text|video)\/[a-z0-9\.\-_+,]+$"
 
 # Legitimate cookie values.
 # A cookie is considered "legitimate" if it follows:
 # - RFC6265 section 4.1.1
 # - RFC2616 section 2.2
-pattern_cookie = r"^([^\(\)<>,;:\\\"\/\[\]\?=\{\}]+)=([^\\,;\"]*)$"
+HTTP_COOKIE = r"^([^\(\)<>,;:\\\"\/\[\]\?=\{\}]+)=([^\\,;\"]*)$"
 
 # Regex matching a legitimate asset URL like http://example.org/images/example.jpg
-pattern_worthless_asset_url = r"^([a-zA-Z0-9\/\.]+)$"
+CUSTOM_LEGITIMATE_ASSET_URL = r"^([a-zA-Z0-9\/\.]+)$"
